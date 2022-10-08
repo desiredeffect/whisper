@@ -15,6 +15,7 @@ from .utils import exact_div, format_timestamp, optional_int, optional_float, st
 if TYPE_CHECKING:
     from .model import Whisper
 
+import json
 
 def transcribe(
     model: "Whisper",
@@ -167,7 +168,14 @@ def transcribe(
     # show the progress bar when verbose is False (otherwise the transcribed text will be printed)
     num_frames = mel.shape[-1]
     previous_seek_value = seek
-    print(num_frames)
+
+    # object to track progress
+    progress = {
+    "totalFrames": num_frames,
+    "processedFrames": seek,
+    }
+
+    print(json.dumps(progress))
 
     # with tqdm.tqdm(total=num_frames, unit='frames', disable=verbose is not False) as pbar:
     while seek < num_frames:
@@ -240,7 +248,8 @@ def transcribe(
         # # update progress bar
         # pbar.update(min(num_frames, seek) - previous_seek_value)
         # previous_seek_value = seek
-        print(min(num_frames, seek))
+        progress["processedFrames"] = min(num_frames, seek)
+        print(json.dumps(progress))
 
     return dict(text=tokenizer.decode(all_tokens[len(initial_prompt):]), segments=all_segments, language=language)
 
