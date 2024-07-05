@@ -5,7 +5,7 @@ from typing import List, Optional, Tuple, Union, TYPE_CHECKING
 
 import numpy as np
 import torch
-import tqdm
+# import tqdm
 
 from .audio import SAMPLE_RATE, N_FRAMES, HOP_LENGTH, pad_or_trim, log_mel_spectrogram
 from .decoding import DecodingOptions, DecodingResult
@@ -165,12 +165,12 @@ def transcribe(
                 "no_speech_prob": result.no_speech_prob,
             }
         )
-        # if verbose:
-        #     print(f"[{format_timestamp(start)} --> {format_timestamp(end)}] {text}")
+        if verbose:
+            print(f"[{format_timestamp(start)} --> {format_timestamp(end)}] {text}")
 
     # show the progress bar when verbose is False (otherwise the transcribed text will be printed)
     num_frames = mel.shape[-1]
-    previous_seek_value = seek
+    # previous_seek_value = seek
 
     # object to track progress
     progress = {
@@ -251,6 +251,8 @@ def transcribe(
         # # update progress bar
         # pbar.update(min(num_frames, seek) - previous_seek_value)
         # previous_seek_value = seek
+
+        # DE Send a JSON progress update
         progress["processedFrames"] = min(num_frames, seek)
         print(json.dumps(progress))
 
