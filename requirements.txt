@@ -1,7 +1,6 @@
-ffmpeg-python==0.2.0
-more-itertools==8.10.0
-numpy==1.23.4
-torch>=1.14.0
-torchaudio>=0.14.0
-torchvision>=0.15.0
-transformers==4.23.1
+numba
+numpy
+torch
+more-itertools
+tiktoken
+triton>=2.0.0,<3;platform_machine=="x86_64" and sys_platform=="linux" or sys_platform=="linux2"
