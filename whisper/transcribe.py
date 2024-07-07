@@ -492,9 +492,9 @@ def transcribe(
         # do not feed the prompt tokens if a high temperature was used
         prompt_reset_since = len(all_tokens)
 
-        # DE Send a JSON progress update
-        progress["processedFrames"] = min(num_frames, seek)
-        print(json.dumps(progress))
+    # DE Send a JSON progress update
+    progress["processedFrames"] = min(num_frames, seek)
+    print(json.dumps(progress))
 
     return dict(
         text=tokenizer.decode(all_tokens[len(initial_prompt_tokens) :]),
