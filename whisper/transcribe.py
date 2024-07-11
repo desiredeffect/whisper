@@ -251,14 +251,6 @@ def transcribe(
             "no_speech_prob": result.no_speech_prob,
         }
 
-    #DE Code: initializing progress tracking
-    num_frames = mel.shape[-1]
-    progress = {
-        "totalFrames": num_frames,
-        "processedFrames": seek
-    }
-    print(json.dumps(progress))
-
     # NOTE: This loop is obscurely flattened to make the diff readable.
     # A later commit should turn this into a simpler nested loop.
     # for seek_clip_start, seek_clip_end in seek_clips:
@@ -272,6 +264,19 @@ def transcribe(
             if clip_idx < len(seek_clips):
                 seek = seek_clips[clip_idx][0]
             continue
+
+        #DE Code: initializing progress tracking
+        num_frames = mel.shape[-1]
+        progress = {
+            "type": "progress",
+            "body": {
+                "totalFrames": num_frames,
+                "processedFrames": seek
+            }
+        }
+        print(json.dumps(progress))
+        #DE Code: progress tracking ends
+
         time_offset = float(seek * HOP_LENGTH / SAMPLE_RATE)
         window_end_time = float((seek + N_FRAMES) * HOP_LENGTH / SAMPLE_RATE)
         segment_size = min(N_FRAMES, content_frames - seek, seek_clip_end - seek)
@@ -493,8 +498,9 @@ def transcribe(
         prompt_reset_since = len(all_tokens)
 
     # DE Send a JSON progress update
-    progress["processedFrames"] = min(num_frames, seek)
+    progress["body"]["processedFrames"] = num_frames
     print(json.dumps(progress))
+    # DE Progress update ends
 
     return dict(
         text=tokenizer.decode(all_tokens[len(initial_prompt_tokens) :]),
